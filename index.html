@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Manager</title>
+    <style>
+      :root {
+        --bg: #f3f4f6;
+        --panel: #ffffff;
+        --accent: #2563eb;
+        --accent-light: rgba(37, 99, 235, 0.08);
+        --text: #1f2937;
+        --muted: #6b7280;
+        --danger: #ef4444;
+        --radius: 14px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: radial-gradient(circle at top, #e0ebff, #ffffff 50%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        padding: 32px 12px;
+      }
+
+      /* Lock background scroll when modal open */
+      body.modal-open {
+        overflow: hidden;
+      }
+
+      .app {
+        width: 100%;
+        max-width: 1200px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 18px;
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
+        overflow: hidden;
+        margin: 0 auto;
+      }
+
+      header {
+        padding: 18px 20px 10px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .title-wrap h1 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: var(--text);
+      }
+      .title-wrap p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      #btnStu,
+      #btnOpenModal {
+        background: var(--accent);
+        border: none;
+        color: #fff;
+        padding: 7px 14px;
+        border-radius: 9999px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.15s ease;
+      }
+      #btnStu:hover,
+      #btnOpenModal:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+      }
+
+      .body-wrap {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        min-height: 420px;
+      }
+
+      /* modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        z-index: 50;
+      }
+      .modal {
+        background: #ffffff;
+        width: 100%;
+        max-width: 520px;
+        border-radius: var(--radius);
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+        border: 1px solid #e5e7eb;
+        padding: 18px 18px 20px;
+      }
+      .modal h2 {
+        font-size: 1rem;
+        margin: 0 0 12px;
+        color: #0f172a;
+      }
+
+      .input-row {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 10px;
+      }
+
+      label {
+        font-size: 0.72rem;
+        color: #0f172a;
+        font-weight: 500;
+      }
+
+      input[type="text"] {
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        padding: 6px 9px;
+        font-size: 0.8rem;
+        transition: 0.12s ease;
+        outline: none;
+        background: #fff;
+      }
+
+      input[type="text"]:focus {
+        border-color: rgba(37, 99, 235, 0.5);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+      }
+
+      #btnAdd {
+        width: 100%;
+        background: #fff;
+        border: 1px solid rgba(37, 99, 235, 0.4);
+        border-radius: 10px;
+        padding: 7px 0;
+        font-weight: 600;
+        color: #1d4ed8;
+        cursor: pointer;
+        margin-top: 6px;
+        transition: 0.12s ease;
+      }
+      #btnAdd:hover {
+        background: rgba(37, 99, 235, 0.08);
+      }
+
+      #btnCancel {
+        width: 100%;
+        background: #fff;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        padding: 7px 0;
+        font-weight: 600;
+        color: #6b7280;
+        cursor: pointer;
+        margin-top: 6px;
+        transition: 0.12s ease;
+        display: none;
+      }
+      #btnCancel:hover {
+        background: #f3f4f6;
+      }
+
+      /* list panel */
+      #contents {
+        padding: 18px 18px 22px;
+        background: #ffffff;
+        overflow-y: auto;
+        max-height: none;
+        min-height: 420px;
+      }
+
+      #contents ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 12px;
+      }
+
+      #contents li {
+        background: linear-gradient(90deg, #ffffff 0%, #f9fafb 100%);
+        border: 1px solid #edf2ff;
+        border-radius: 12px;
+        padding: 9px 12px 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 12px;
+        align-items: center;
+      }
+
+      #contents li b {
+        font-size: 0.88rem;
+        margin-right: 3px;
+      }
+
+      #contents li small {
+        color: var(--muted);
+      }
+
+      #contents button {
+        border: none;
+        background: rgba(37, 99, 235, 0.05);
+        padding: 3px 10px 4px;
+        border-radius: 999px;
+        font-size: 0.68rem;
+        color: #1d4ed8;
+        cursor: pointer;
+        transition: 0.12s ease;
+        margin-top: 4px;
+      }
+
+      #contents button:hover {
+        background: rgba(37, 99, 235, 0.18);
+      }
+
+      #contents button:last-child {
+        background: rgba(239, 68, 68, 0.05);
+        color: #b91c1c;
+      }
+      #contents button:last-child:hover {
+        background: rgba(239, 68, 68, 0.12);
+      }
+
+      /* responsive */
+      @media (max-width: 900px) {
+        .body-wrap {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 560px) {
+        header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+        .app {
+          border-radius: 14px;
+        }
+        .form-panel,
+        #contents {
+          padding: 14px 14px 18px;
+        }
+      }
+    </style>
+    <script>
+      window.onload = function () {
+        const btnStu = document.getElementById("btnStu");
+        const btnAdd = document.getElementById("btnAdd");
+        const btnCancel = document.getElementById("btnCancel");
+        const btnOpenModal = document.getElementById("btnOpenModal");
+        const overlay = document.getElementById("modalOverlay");
+
+        btnStu.addEventListener("click", getStudents);
+
+        btnOpenModal.addEventListener("click", function () {
+          resetForm();
+          showModal();
+        });
+
+        btnAdd.addEventListener("click", function () {
+          if (btnAdd.textContent === "Add") {
+            postData();
+          } else {
+            updateData();
+          }
+        });
+        btnCancel.addEventListener("click", function () {
+          hideModal();
+          resetForm();
+        });
+
+        // Close when clicking outside modal content
+        overlay.addEventListener("click", function (e) {
+          if (e.target === overlay) {
+            hideModal();
+            resetForm();
+          }
+        });
+
+        // Optionally fetch once on load
+        // getStudents();
+      };
+
+      function showModal() {
+        const overlay = document.getElementById("modalOverlay");
+        overlay.style.display = "flex";
+        document.body.classList.add("modal-open");
+      }
+
+      function hideModal() {
+        const overlay = document.getElementById("modalOverlay");
+        overlay.style.display = "none";
+        document.body.classList.remove("modal-open");
+      }
+
+      function resetForm() {
+        document.getElementById("name").value = "";
+        document.getElementById("age").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("phone").value = "";
+        document.getElementById("sex").value = "";
+        document.getElementById("btnAdd").textContent = "Add";
+        document.getElementById("btnAdd").removeAttribute("data-id");
+        const title = document.getElementById("formTitle");
+        if (title) title.textContent = "Add New Student";
+      }
+
+      function editData(id, name, age, email, phone, sex) {
+        document.getElementById("name").value = name;
+        document.getElementById("age").value = age;
+        document.getElementById("email").value = email;
+        document.getElementById("phone").value = phone;
+        document.getElementById("sex").value = sex;
+        document.getElementById("btnAdd").textContent = "Update";
+        document.getElementById("btnAdd").setAttribute("data-id", id);
+        const title = document.getElementById("formTitle");
+        if (title) title.textContent = "Edit Student";
+        showModal();
+      }
+
+      function getStudents() {
+        let contents = document.getElementById("contents");
+        const xhr = new XMLHttpRequest();
+
+        xhr.onload = () => {
+          if (xhr.status === 201 || xhr.status === 200) {
+            const res = JSON.parse(xhr.response);
+            contents.innerHTML = makeList(res);
+          } else {
+            console.log(xhr.status, xhr.statusText);
+          }
+        };
+
+        xhr.open(
+          "GET",
+          "https://690493406b8dabde496444eb.mockapi.io/my_data"
+        );
+        xhr.send();
+      }
+
+      function makeList(data) {
+        let str = "<ul>";
+
+        for (let key in data) {
+          const stu = data[key];
+          const email = stu.email ? stu.email : "-";
+          const phone = stu.phone ? stu.phone : "-";
+          const sex = stu.sex ? stu.sex : "-";
+
+          str += `
+            <li>
+              <div style="flex:1 1 200px;">
+                <b>${stu.name}</b> (${stu.age}) 
+                <small>• ${sex}</small><br/>
+                <small>${email} / ${phone}</small>
+              </div>
+              <div>
+                <button onclick="editData('${stu.id}', '${stu.name}', '${stu.age}', '${stu.email ? stu.email : ''}', '${stu.phone ? stu.phone : ''}', '${stu.sex ? stu.sex : ''}')">modify</button>
+                <button onclick="deleteData('${stu.id}')">delete</button>
+              </div>
+            </li>
+          `;
+        }
+        str += "</ul>";
+        return str;
+      }
+
+      function postData() {
+        let name = document.getElementById("name");
+        let age = document.getElementById("age");
+        let email = document.getElementById("email");
+        let phone = document.getElementById("phone");
+        let sex = document.getElementById("sex");
+
+        const xhr = new XMLHttpRequest();
+
+        xhr.onload = () => {
+          if (xhr.status === 201 || xhr.status === 200) {
+            resetForm();
+            hideModal();
+            getStudents();
+          } else {
+            console.log(xhr.status, xhr.statusText);
+          }
+        };
+
+        xhr.open(
+          "POST",
+          "https://690493406b8dabde496444eb.mockapi.io/my_data"
+        );
+        xhr.setRequestHeader("content-type", "application/json; charset=UTF-8");
+
+        const data = {
+          name: name.value,
+          age: age.value,
+          email: email.value,
+          phone: phone.value,
+          sex: sex.value
+        };
+
+        xhr.send(JSON.stringify(data));
+      }
+
+      function updateData() {
+        let id = document.getElementById("btnAdd").getAttribute("data-id");
+        let name = document.getElementById("name");
+        let age = document.getElementById("age");
+        let email = document.getElementById("email");
+        let phone = document.getElementById("phone");
+        let sex = document.getElementById("sex");
+
+        const xhr = new XMLHttpRequest();
+        xhr.open(
+          "PUT",
+          "https://690493406b8dabde496444eb.mockapi.io/my_data/" + id
+        );
+        xhr.setRequestHeader("content-type", "application/json; charset=UTF-8");
+
+        const data = {
+          name: name.value,
+          age: age.value,
+          email: email.value,
+          phone: phone.value,
+          sex: sex.value
+        };
+        xhr.send(JSON.stringify(data));
+
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            resetForm();
+            hideModal();
+            getStudents();
+          } else {
+            console.log(xhr.status, xhr.statusText);
+          }
+        };
+      }
+
+      function deleteData(id) {
+        const xhr = new XMLHttpRequest();
+        xhr.open(
+          "DELETE",
+          "https://690493406b8dabde496444eb.mockapi.io/my_data/" + id
+        );
+
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            getStudents();
+          } else {
+            console.log(xhr.status, xhr.statusText);
+          }
+        };
+        xhr.send();
+      }
+    </script>
+  </head>
+
+  <body>
+    <div class="app">
+      <header>
+        <div class="title-wrap">
+          <h1>📚 Student Manager</h1>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button id="btnStu">Fetch student data</button>
+          <button id="btnOpenModal">Add New Student</button>
+        </div>
+      </header>
+      <div class="body-wrap">
+        <div id="contents"></div>
+      </div>
+    </div>
+
+    <!-- Modal (moved outside .app to cover full viewport) -->
+    <div id="modalOverlay" class="modal-overlay">
+      <div class="modal">
+        <h2 id="formTitle">Add New Student</h2>
+        <div class="input-row">
+          <label for="name">Name</label>
+          <input type="text" id="name" placeholder="name" />
+        </div>
+        <div class="input-row">
+          <label for="age">Age</label>
+          <input type="text" id="age" placeholder="age" />
+        </div>
+        <div class="input-row">
+          <label for="email">Email</label>
+          <input type="text" id="email" placeholder="email" />
+        </div>
+        <div class="input-row">
+          <label for="phone">Phone</label>
+          <input type="text" id="phone" placeholder="01000000000" />
+        </div>
+        <div class="input-row">
+          <label for="sex">Sex</label>
+          <input type="text" id="sex" placeholder="male / female" />
+        </div>
+        <button id="btnAdd" type="button">Add</button>
+        <button id="btnCancel" type="button">Cancel</button>
+      </div>
+    </div>
+  </body>
+</html>
