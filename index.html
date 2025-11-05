@@ -6,186 +6,128 @@
     <title>Student Manager</title>
     <style>
       :root {
-        --bg: #f3f4f6;
-        --panel: #ffffff;
-        --accent: #2563eb;
-        --accent-light: rgba(37, 99, 235, 0.08);
-        --text: #1f2937;
-        --muted: #6b7280;
-        --danger: #ef4444;
-        --radius: 14px;
+        --bg: #0b1020;
+        --bg-soft: #0f162f;
+        --panel: #0f162f;
+        --panel-elev: #121a38;
+        --accent: #7c9bff;
+        --accent-strong: #5f80ff;
+        --text: #e7eaf6;
+        --muted: #9aa3bf;
+        --danger: #ff6b6b;
+        --radius: 16px;
       }
 
-      * {
-        box-sizing: border-box;
-      }
+      * { box-sizing: border-box; }
 
       body {
         margin: 0;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-          sans-serif;
-        background: radial-gradient(circle at top, #e0ebff, #ffffff 50%);
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+        color: var(--text);
+        background:
+          radial-gradient(1200px 600px at 10% -10%, rgba(124,155,255,0.25), transparent 60%),
+          radial-gradient(900px 500px at 110% -10%, rgba(111,76,255,0.25), transparent 60%),
+          linear-gradient(180deg, #0b1020 0%, #0b1020 100%);
         min-height: 100vh;
         display: flex;
         justify-content: center;
-        padding: 32px 12px;
+        padding: 32px 14px;
       }
 
-      /* Lock background scroll when modal open */
-      body.modal-open {
-        overflow: hidden;
-      }
+      body.modal-open { overflow: hidden; }
 
       .app {
         width: 100%;
-        max-width: 1200px;
-        background: rgba(255, 255, 255, 0.85);
+        max-width: 1100px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        border-radius: 18px;
-        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 22px;
+        box-shadow: 0 30px 60px rgba(2, 6, 23, 0.45);
         overflow: hidden;
         margin: 0 auto;
       }
 
       header {
-        padding: 18px 20px 10px;
-        border-bottom: 1px solid #e5e7eb;
+        position: relative;
+        padding: 22px 22px 18px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 16px;
+        background:
+          radial-gradient(800px 300px at -10% 0%, rgba(124,155,255,0.18), transparent 60%),
+          linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
       }
 
       .title-wrap h1 {
-        margin: 0;
-        font-size: 1.1rem;
-        color: var(--text);
+        margin: 0 0 6px;
+        font-size: 1.25rem;
+        letter-spacing: 0.2px;
       }
       .title-wrap p {
-        margin: 2px 0 0;
+        margin: 0;
         color: var(--muted);
-        font-size: 0.8rem;
+        font-size: 0.88rem;
       }
 
-      #btnStu,
-      #btnOpenModal {
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .input {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--panel);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 999px;
+        padding: 8px 12px;
+        color: var(--text);
+      }
+      .input input {
+        border: none;
+        outline: none;
+        background: transparent;
+        color: var(--text);
+        min-width: 160px;
+      }
+
+      .btn {
         background: var(--accent);
         border: none;
-        color: #fff;
-        padding: 7px 14px;
+        color: #0b1020;
+        padding: 8px 14px;
         border-radius: 9999px;
-        font-weight: 500;
+        font-weight: 700;
+        letter-spacing: 0.2px;
         cursor: pointer;
-        transition: 0.15s ease;
+        transition: transform .1s ease, filter .15s ease;
       }
-      #btnStu:hover,
-      #btnOpenModal:hover {
-        background: #1d4ed8;
-        transform: translateY(-1px);
-      }
+      .btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+      .btn.secondary { background: #2a355f; color: #e6eaff; }
+      .btn.ghost { background: rgba(255,255,255,0.06); color: #e6eaff; }
 
-      .body-wrap {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr);
-        min-height: 420px;
-      }
-
-      /* modal */
-      .modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(15, 23, 42, 0.45);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 16px;
-        z-index: 50;
-      }
-      .modal {
-        background: #ffffff;
-        width: 100%;
-        max-width: 520px;
-        border-radius: var(--radius);
-        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
-        border: 1px solid #e5e7eb;
-        padding: 18px 18px 20px;
-      }
-      .modal h2 {
-        font-size: 1rem;
-        margin: 0 0 12px;
-        color: #0f172a;
-      }
-
-      .input-row {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        margin-bottom: 10px;
-      }
-
-      label {
-        font-size: 0.72rem;
-        color: #0f172a;
-        font-weight: 500;
-      }
-
-      input[type="text"] {
-        border: 1px solid #d1d5db;
-        border-radius: 10px;
-        padding: 6px 9px;
-        font-size: 0.8rem;
-        transition: 0.12s ease;
-        outline: none;
-        background: #fff;
-      }
-
-      input[type="text"]:focus {
-        border-color: rgba(37, 99, 235, 0.5);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
-      }
-
-      #btnAdd {
-        width: 100%;
-        background: #fff;
-        border: 1px solid rgba(37, 99, 235, 0.4);
-        border-radius: 10px;
-        padding: 7px 0;
-        font-weight: 600;
-        color: #1d4ed8;
-        cursor: pointer;
-        margin-top: 6px;
-        transition: 0.12s ease;
-      }
-      #btnAdd:hover {
-        background: rgba(37, 99, 235, 0.08);
-      }
-
-      #btnCancel {
-        width: 100%;
-        background: #fff;
-        border: 1px solid #d1d5db;
-        border-radius: 10px;
-        padding: 7px 0;
-        font-weight: 600;
-        color: #6b7280;
-        cursor: pointer;
-        margin-top: 6px;
-        transition: 0.12s ease;
-        display: none;
-      }
-      #btnCancel:hover {
-        background: #f3f4f6;
-      }
+      .body-wrap { display: grid; grid-template-columns: minmax(0, 1fr); }
 
       /* list panel */
       #contents {
-        padding: 18px 18px 22px;
-        background: #ffffff;
+        padding: 18px 18px 26px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
         overflow-y: auto;
-        max-height: none;
-        min-height: 420px;
+        min-height: 480px;
       }
+
+      #contents .empty {
+        text-align: center;
+        color: var(--muted);
+        padding: 80px 10px;
+      }
+      #contents .empty .emoji { font-size: 2rem; display: block; margin-bottom: 8px; }
 
       #contents ul {
         list-style: none;
@@ -196,69 +138,91 @@
       }
 
       #contents li {
-        background: linear-gradient(90deg, #ffffff 0%, #f9fafb 100%);
-        border: 1px solid #edf2ff;
-        border-radius: 12px;
-        padding: 9px 12px 8px;
+        background: linear-gradient(180deg, var(--panel) 0%, var(--panel-elev) 100%);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 14px;
+        padding: 12px 12px 12px;
         display: flex;
         flex-wrap: wrap;
-        gap: 4px 12px;
+        gap: 8px 14px;
         align-items: center;
       }
 
-      #contents li b {
-        font-size: 0.88rem;
-        margin-right: 3px;
+      .avatar {
+        width: 36px; height: 36px; border-radius: 50%;
+        background: conic-gradient(from 0deg, #7c9bff, #6f4cff, #7c9bff);
+        display: inline-flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 0.88rem; font-weight: 800;
+        box-shadow: inset 0 0 0 2px rgba(255,255,255,0.15);
       }
 
-      #contents li small {
-        color: var(--muted);
+      .meta { flex: 1 1 260px; min-width: 200px; }
+      .meta .name { font-weight: 700; font-size: 0.98rem; }
+      .meta .sub { color: var(--muted); font-size: 0.8rem; }
+
+      .badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        border-radius: 999px; padding: 2px 8px; font-size: 0.72rem; font-weight: 700;
+        background: rgba(124,155,255,0.14); color: #c9d4ff; cursor: default; user-select: none;
+        margin-left: 8px;
       }
+      .badge.male { background: rgba(124,155,255,0.14); color: #c9d4ff; }
+      .badge.female { background: rgba(255,145,197,0.16); color: #ffd7ec; }
+      .badge.na { background: rgba(156,163,175,0.16); color: #e5e7eb; }
+
+      .row-actions button { margin-left: 8px; }
 
       #contents button {
-        border: none;
-        background: rgba(37, 99, 235, 0.05);
-        padding: 3px 10px 4px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.06);
+        padding: 6px 12px;
         border-radius: 999px;
-        font-size: 0.68rem;
-        color: #1d4ed8;
+        font-size: 0.74rem;
+        color: #e6eaff;
         cursor: pointer;
         transition: 0.12s ease;
-        margin-top: 4px;
       }
+      #contents button:hover { background: rgba(255,255,255,0.12); }
+      #contents button:last-child { background: rgba(255, 107, 107, 0.12); color: #ffd5d5; border-color: rgba(255, 107, 107, 0.25); }
+      #contents button:last-child:hover { background: rgba(255, 107, 107, 0.2); }
 
-      #contents button:hover {
-        background: rgba(37, 99, 235, 0.18);
+      /* modal */
+      .modal-overlay {
+        position: fixed; inset: 0; background: rgba(2, 6, 23, 0.65);
+        display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50;
       }
+      .modal {
+        background: linear-gradient(180deg, var(--panel) 0%, var(--panel-elev) 100%);
+        width: 100%; max-width: 560px; border-radius: 18px;
+        box-shadow: 0 30px 60px rgba(2, 6, 23, 0.6);
+        border: 1px solid rgba(255,255,255,0.08);
+        padding: 18px 18px 20px;
+      }
+      .modal h2 { font-size: 1rem; margin: 0 0 12px; color: var(--text); }
 
-      #contents button:last-child {
-        background: rgba(239, 68, 68, 0.05);
-        color: #b91c1c;
+      .form-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+      @media (min-width: 520px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+
+      .input-row { display: flex; flex-direction: column; gap: 6px; }
+      label { font-size: 0.78rem; color: var(--text); font-weight: 600; }
+      input[type="text"] {
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 12px; padding: 10px 12px; font-size: 0.88rem;
+        transition: 0.12s ease; outline: none; background: rgba(255,255,255,0.04); color: var(--text);
       }
-      #contents button:last-child:hover {
-        background: rgba(239, 68, 68, 0.12);
-      }
+      input[type="text"]::placeholder { color: #aab3cf; }
+      input[type="text"]:focus { border-color: rgba(124,155,255,0.45); box-shadow: 0 0 0 3px rgba(124,155,255,0.12); }
+
+      #btnAdd { width: 100%; background: var(--accent); border: none; border-radius: 12px; padding: 10px 0; font-weight: 800; color: #0b1020; cursor: pointer; margin-top: 8px; transition: 0.12s ease; }
+      #btnAdd:hover { filter: brightness(1.06); }
+      #btnCancel { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 0; font-weight: 700; color: #e6eaff; cursor: pointer; margin-top: 6px; transition: 0.12s ease; display: none; }
+      #btnCancel:hover { background: rgba(255,255,255,0.12); }
 
       /* responsive */
-      @media (max-width: 900px) {
-        .body-wrap {
-          grid-template-columns: 1fr;
-        }
-      }
-
       @media (max-width: 560px) {
-        header {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 10px;
-        }
-        .app {
-          border-radius: 14px;
-        }
-        .form-panel,
-        #contents {
-          padding: 14px 14px 18px;
-        }
+        header { flex-direction: column; align-items: flex-start; gap: 10px; }
+        .app { border-radius: 16px; }
+        #contents { padding: 14px; }
       }
     </style>
     <script>
@@ -268,6 +232,10 @@
         const btnCancel = document.getElementById("btnCancel");
         const btnOpenModal = document.getElementById("btnOpenModal");
         const overlay = document.getElementById("modalOverlay");
+        const search = document.getElementById("search");
+
+        // Keep a copy of data for filtering
+        window.stuData = [];
 
         btnStu.addEventListener("click", getStudents);
 
@@ -288,6 +256,23 @@
           resetForm();
         });
 
+        if (search) {
+          search.addEventListener("input", function () {
+            const q = search.value.trim().toLowerCase();
+            if (!q) return renderList(window.stuData);
+            const filtered = window.stuData.filter((s) => {
+              return (
+                (s.name || "").toLowerCase().includes(q) ||
+                String(s.age || "").toLowerCase().includes(q) ||
+                (s.email || "").toLowerCase().includes(q) ||
+                (s.phone || "").toLowerCase().includes(q) ||
+                (s.sex || "").toLowerCase().includes(q)
+              );
+            });
+            renderList(filtered);
+          });
+        }
+
         // Close when clicking outside modal content
         overlay.addEventListener("click", function (e) {
           if (e.target === overlay) {
@@ -296,8 +281,8 @@
           }
         });
 
-        // Optionally fetch once on load
-        // getStudents();
+        // Auto-fetch on load
+        getStudents();
       };
 
       function showModal() {
@@ -344,7 +329,8 @@
         xhr.onload = () => {
           if (xhr.status === 201 || xhr.status === 200) {
             const res = JSON.parse(xhr.response);
-            contents.innerHTML = makeList(res);
+            window.stuData = Array.isArray(res) ? res : [];
+            renderList(window.stuData);
           } else {
             console.log(xhr.status, xhr.statusText);
           }
@@ -357,31 +343,64 @@
         xhr.send();
       }
 
-      function makeList(data) {
+      function renderList(data) {
+        let contents = document.getElementById("contents");
+        if (!data || data.length === 0) {
+          contents.innerHTML = `
+            <div class="empty">
+              <span class="emoji">✨</span>
+              No students yet. Click "Add New Student" to create one, or "Fetch" to load demo data.
+            </div>
+          `;
+          return;
+        }
         let str = "<ul>";
-
-        for (let key in data) {
-          const stu = data[key];
+        for (let i = 0; i < data.length; i++) {
+          const stu = data[i];
           const email = stu.email ? stu.email : "-";
           const phone = stu.phone ? stu.phone : "-";
-          const sex = stu.sex ? stu.sex : "-";
+          const sex = (stu.sex || "-").toLowerCase();
+          const badgeClass = sex === "male" ? "male" : sex === "female" ? "female" : "na";
+          const initials = (stu.name || "?")
+            .split(" ")
+            .map((p) => p[0])
+            .join("")
+            .slice(0, 2)
+            .toUpperCase();
 
           str += `
             <li>
-              <div style="flex:1 1 200px;">
-                <b>${stu.name}</b> (${stu.age}) 
-                <small>• ${sex}</small><br/>
-                <small>${email} / ${phone}</small>
+              <div class="avatar" aria-hidden="true">${initials}</div>
+              <span class="badge ${badgeClass}">${sex || '-'}</span>
+              <div class="meta">
+                <div class="name">${escapeHtml(stu.name || "Unnamed")} <span class="sub">(${escapeHtml(stu.age || "-")})</span></div>
+                <div class="sub">${escapeHtml(email)} • ${escapeHtml(phone)}</div>
               </div>
-              <div>
-                <button onclick="editData('${stu.id}', '${stu.name}', '${stu.age}', '${stu.email ? stu.email : ''}', '${stu.phone ? stu.phone : ''}', '${stu.sex ? stu.sex : ''}')">modify</button>
-                <button onclick="deleteData('${stu.id}')">delete</button>
+              <div class="row-actions">
+                <button onclick="editData('${stu.id}', '${js(stu.name)}', '${js(stu.age)}', '${js(stu.email)}', '${js(stu.phone)}', '${js(stu.sex)}')">Modify</button>
+                <button onclick="deleteData('${stu.id}')">Delete</button>
               </div>
             </li>
           `;
         }
         str += "</ul>";
-        return str;
+        contents.innerHTML = str;
+      }
+
+      // Basic escaping helpers for safe HTML/JS embedding
+      function escapeHtml(v) {
+        return String(v == null ? "" : v)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+      function js(v) {
+        return String(v == null ? "" : v)
+          .replace(/\\/g, "\\\\")
+          .replace(/'/g, "\\'")
+          .replace(/\n/g, "\\n");
       }
 
       function postData() {
@@ -479,10 +498,15 @@
       <header>
         <div class="title-wrap">
           <h1>📚 Student Manager</h1>
+          <p>Manage, add, and search students with a clean interface.</p>
         </div>
-        <div style="display:flex; gap:8px;">
-          <button id="btnStu">Fetch student data</button>
-          <button id="btnOpenModal">Add New Student</button>
+        <div class="toolbar">
+          <label class="input" for="search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <input id="search" placeholder="Search students..." />
+          </label>
+          <button id="btnStu" class="btn ghost" title="Fetch demo data">Fetch</button>
+          <button id="btnOpenModal" class="btn" title="Add a new student">Add New Student</button>
         </div>
       </header>
       <div class="body-wrap">
@@ -494,25 +518,27 @@
     <div id="modalOverlay" class="modal-overlay">
       <div class="modal">
         <h2 id="formTitle">Add New Student</h2>
-        <div class="input-row">
-          <label for="name">Name</label>
-          <input type="text" id="name" placeholder="name" />
-        </div>
-        <div class="input-row">
-          <label for="age">Age</label>
-          <input type="text" id="age" placeholder="age" />
-        </div>
-        <div class="input-row">
-          <label for="email">Email</label>
-          <input type="text" id="email" placeholder="email" />
-        </div>
-        <div class="input-row">
-          <label for="phone">Phone</label>
-          <input type="text" id="phone" placeholder="01000000000" />
-        </div>
-        <div class="input-row">
-          <label for="sex">Sex</label>
-          <input type="text" id="sex" placeholder="male / female" />
+        <div class="form-grid">
+          <div class="input-row">
+            <label for="name">Name</label>
+            <input type="text" id="name" placeholder="Jane Doe" />
+          </div>
+          <div class="input-row">
+            <label for="age">Age</label>
+            <input type="text" id="age" placeholder="20" />
+          </div>
+          <div class="input-row">
+            <label for="email">Email</label>
+            <input type="text" id="email" placeholder="jane@school.edu" />
+          </div>
+          <div class="input-row">
+            <label for="phone">Phone</label>
+            <input type="text" id="phone" placeholder="010-0000-0000" />
+          </div>
+          <div class="input-row" style="grid-column: 1 / -1;">
+            <label for="sex">Sex</label>
+            <input type="text" id="sex" placeholder="male / female" />
+          </div>
         </div>
         <button id="btnAdd" type="button">Add</button>
         <button id="btnCancel" type="button">Cancel</button>
